@@ -1,4 +1,5 @@
 name: "7 Timeframe"
+
 on:
   schedule:
     - cron: '0 2 * * *'
@@ -110,8 +111,7 @@ jobs:
           fi
           # Save updated resume count
           echo $RESUME_COUNT > resume_count_${TF}.txt
-        env:
-          RESUME_COUNT: ${{ env.RESUME_COUNT }}
+          echo "RESUME_COUNT=$RESUME_COUNT" >> $GITHUB_ENV  # Persist for subsequent steps
 
       - name: Commit changes and Force Push Changes
         run: |
@@ -127,11 +127,7 @@ jobs:
             exit 1
           fi
 
-          # Check if RESUME_COUNT is set
-          if [ -z "$RESUME_COUNT" ]; then
-            echo "RESUME_COUNT is not set. Using default value of 0."
-            RESUME_COUNT=0
-          fi
+          # Load the persisted RESUME_COUNT from the environment
           echo "Using Resume Count: $RESUME_COUNT"
 
           # Stage and commit all changes, including resume count
